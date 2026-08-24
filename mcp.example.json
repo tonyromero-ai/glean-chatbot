@@ -1,0 +1,17 @@
+{
+  "_comment": "Example MCP client config (e.g. Cursor: .cursor/mcp.json, or Claude Desktop). Replace ABSOLUTE_PATH and the token values, then restart the client. The env block passes credentials to the server process.",
+  "mcpServers": {
+    "glean-chatbot": {
+      "command": "python",
+      "args": ["ABSOLUTE_PATH/glean-chatbot/src/mcp_server.py"],
+      "env": {
+        "GLEAN_INSTANCE": "support-lab",
+        "GLEAN_INDEXING_TOKEN": "paste-indexing-token-here",
+        "GLEAN_CLIENT_TOKEN": "paste-client-token-here",
+        "GLEAN_DATASOURCE": "interviewds",
+        "GLEAN_DATASOURCE_DISPLAY": "Finance Evolution Corp",
+        "GLEAN_URL_REGEX": "^https://financeevolution.internal/.*"
+      }
+    }
+  }
+}

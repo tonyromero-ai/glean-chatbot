@@ -1,0 +1,13 @@
+# Core HTTP client for the Glean REST APIs.
+requests>=2.31
+
+# Load .env automatically (used by src/config.py).
+python-dotenv>=1.0
+
+# MCP SDK for the single tool server.
+# Works with both v1.x (mcp.server.fastmcp.FastMCP) and v2.x
+# (mcp.server.MCPServer); mcp_server.py imports defensively.
+mcp>=1.2
+
+# Test runner (optional; tests also run standalone via `python tests/test_pipeline.py`).
+pytest>=8.0

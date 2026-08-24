@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.DS_Store
+.cursor/mcp.json
+.cursor/
+STUDY_GUIDE.md
