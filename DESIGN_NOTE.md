@@ -52,26 +52,38 @@ other indexed content.
 ## 2. End-to-end flow
 
 ```
-question
-  → Search        get top_k docs (filtered to our datasource)
-  → guard         no hits? suggest similar doc titles, don't call Chat
-  → Chat          answer using only those Search hits
-  → return        answer + sources
+data/documents.json
+        │
+        ▼  scripts/index_documents.py
+   [1] INDEX  ── Indexing API ──► Glean datasource + documents
+                                        │
+   User question (CLI or MCP ask_glean)  │
+        │                                │
+        ▼                                │
+   src/pipeline.py                       │
+        │                                │
+   [2] SEARCH ◄── Search API ────────────┘
+        │         (retrieve hits)
+        │
+        ├─ no hits? ──► do NOT call Chat
+        │               return "did you mean" / available titles
+        │               (grounded=False)
+        │
+        └─ hits? ──► [3] CLOSED-BOOK CHAT
+                          Chat API, with Search hits as the only context
+                          │
+                          ▼
+                     [4] GROUNDED ANSWER + SOURCES
+                          {answer, sources, retrieved, grounded=True}
 ```
 
-Why Search before Chat?
+CLI (`scripts/ask.py`) and MCP (`src/mcp_server.py`) are thin adapters over the
+same `answer_question()` pipeline. Whatever the CLI prints is what the MCP tool
+returns (minus formatting).
 
-- I can show exactly what was retrieved.
-- If nothing matches, I stop before Chat and avoid a made-up answer.
-- Easier to debug when something goes wrong.
-
-When Search returns nothing, I use `difflib` to suggest close document titles ("did
-you mean...") or list what's available. No Chat call, no guessing.
-
-When Search returns hits but Chat comes back empty, I fall back to a snippet from
-the top Search result so the user still gets something tied to a source.
-
-CLI and MCP both call the same `pipeline.py`. Same behavior either way.
+When Search returns nothing, `difflib` suggests close document titles or lists what's
+available. When Search hits but Chat comes back empty, I fall back to a snippet from
+the top result.
 
 ## 3. Tradeoffs (what I skipped on purpose)
 
